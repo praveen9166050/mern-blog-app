@@ -19,6 +19,15 @@ app.get('/api/test', (req, res) => {
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal Server Error";
+  res.status(statusCode).json({
+    success: false,
+    message
+  });
+});
+
 mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("Connected to the database."))
 .catch(err => console.log(err.message));
