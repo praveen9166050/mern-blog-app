@@ -63,7 +63,7 @@ function SignUp() {
               <TextInput type="email" placeholder="Email" id="email" onChange={handleChange} />
             </div>
             <div>
-              <Label value="Your Password" />
+              <Label value="Your password" />
               <TextInput type="password" placeholder="Password" id="password" onChange={handleChange} />
             </div>
             <Button type="submit" gradientDuoTone="purpleToPink" disabled={loading}>
