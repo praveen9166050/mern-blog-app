@@ -28,10 +28,10 @@ app.use((err, req, res, next) => {
   });
 });
 
-mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log("Connected to the database."))
-.catch(err => console.log(err.message));
-
-app.listen(3000, () => {
-  console.log('Server is listening on port 3000');
+mongoose.connect(process.env.MONGO_URI).then(() => {
+  app.listen(3000, () => {
+    console.log('Server is listening on port 3000');
+  });
+}).catch(err => {
+  console.log(err.message)
 });
