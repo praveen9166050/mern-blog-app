@@ -26,7 +26,7 @@ function OAuth() {
           googlePhotoUrl: user.photoURL
         })
       });
-      const data = res.json();
+      const data = await res.json();
       if (!data.success) {
         throw new Error(data.message);
       }

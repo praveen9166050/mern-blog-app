@@ -35,7 +35,56 @@ export const signin = async (req, res, next) => {
       throw new CustomError(400, "Invalid credentials");
     }
     const token = jwt.sign(
-      {userId: user._id, email}, 
+      {userId: user._id}, 
+      process.env.JWT_SECRET, 
+      {expiresIn: process.env.JWT_EXPIRES_IN}
+    );
+    const {password: pass, ...rest} = user._doc;
+    res.status(200).cookie(
+      'access_token', 
+      token, 
+      {httpOnly: true}
+    ).json({
+      success: true,
+      message: "Signed in successfully",
+      user: rest
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const googleAuth = async (req, res, next) => {
+  try {
+    const {name, email, googlePhotoUrl} = req.body;
+    const user = await User.findOne({email});
+    if (!user) {
+      const password = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+      const hashedPassword = bcryptjs.hashSync(password, 10);
+      const user = await User.create({
+        username: name.toLowerCase().split(' ').join('') + Math.random().toString(9).slice(-4), 
+        email, 
+        password: hashedPassword,
+        profilePicture: googlePhotoUrl
+      });
+      const token = jwt.sign(
+        {userId: user._id}, 
+        process.env.JWT_SECRET, 
+        {expiresIn: process.env.JWT_EXPIRES_IN}
+      );
+      const {password: pass, ...rest} = user._doc;
+      return res.status(200).cookie(
+        'access_token', 
+        token, 
+        {httpOnly: true}
+      ).json({
+        success: true,
+        message: "User has been created",
+        user: rest
+      });
+    }
+    const token = jwt.sign(
+      {userId: user._id}, 
       process.env.JWT_SECRET, 
       {expiresIn: process.env.JWT_EXPIRES_IN}
     );
