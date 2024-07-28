@@ -4,7 +4,6 @@ import bcryptjs from "bcryptjs";
 
 export const updateUser = async (req, res, next) => {
   try {
-    console.log(req.user);
     if (req.user.userId !== req.params.userId) {
       throw new CustomError(403, "You are not allowed to update this user.");
     }
@@ -18,10 +17,10 @@ export const updateUser = async (req, res, next) => {
       if (req.body.username.length < 7 && req.body.username.length > 20) {
         throw new CustomError(400, "Username must be between 7 and 20 characters.");
       }
-      if (req.body.username.length.includes(' ')) {
+      if (req.body.username.includes(' ')) {
         throw new CustomError(400, "Username cannot contain spaces.");
       }
-      if (req.body.username.length !== req.body.username.toLowerCase()) {
+      if (req.body.username !== req.body.username.toLowerCase()) {
         throw new CustomError(400, "Username must be lowercase.");
       }
       if (!req.body.username.match(/^[a-zA-Z0-9]+$/)) {
@@ -36,6 +35,7 @@ export const updateUser = async (req, res, next) => {
     }, {new: true});
     const {password, ...rest} = updatedUser._doc;
     res.status(200).json({
+      success: true,
       message: "User updated successfully",
       user: rest
     });
