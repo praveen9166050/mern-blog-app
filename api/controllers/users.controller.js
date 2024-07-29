@@ -2,6 +2,17 @@ import User from "../models/user.model.js";
 import CustomError from "../utils/customError.js";
 import bcryptjs from "bcryptjs";
 
+export const signout = async (req, res, next) => {
+  try {
+    res.clearCookie('access_token').status(200).json({
+      success: true,
+      message: "Signe dout successfully"
+    })
+  } catch (error) {
+    next(error);
+  }
+}
+
 export const updateUser = async (req, res, next) => {
   try {
     if (req.user.userId !== req.params.userId) {
@@ -44,7 +55,7 @@ export const updateUser = async (req, res, next) => {
   }
 };
 
-export const deleteUser = async (req, res) => {
+export const deleteUser = async (req, res, next) => {
   try {
     if (req.user.userId !== req.params.userId) {
       throw new CustomError(403, "You are not allowed to delete this user.");
@@ -53,8 +64,8 @@ export const deleteUser = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "User deleted successfully"
-    })
+    });
   } catch (error) {
-    next(error.message);
+    next(error);
   }
 }
