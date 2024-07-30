@@ -35,7 +35,7 @@ export const signin = async (req, res, next) => {
       throw new CustomError(400, "Invalid credentials");
     }
     const token = jwt.sign(
-      {userId: user._id}, 
+      {userId: user._id, isAdmin: user.isAdmin}, 
       process.env.JWT_SECRET, 
       {expiresIn: process.env.JWT_EXPIRES_IN}
     );
@@ -68,7 +68,7 @@ export const googleAuth = async (req, res, next) => {
         profilePicture: googlePhotoUrl
       });
       const token = jwt.sign(
-        {userId: user._id}, 
+        {userId: user._id, isAdmin: user.isAdmin}, 
         process.env.JWT_SECRET, 
         {expiresIn: process.env.JWT_EXPIRES_IN}
       );
@@ -84,7 +84,7 @@ export const googleAuth = async (req, res, next) => {
       });
     }
     const token = jwt.sign(
-      {userId: user._id}, 
+      {userId: user._id, isAdmin: user.isAdmin}, 
       process.env.JWT_SECRET, 
       {expiresIn: process.env.JWT_EXPIRES_IN}
     );
