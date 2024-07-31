@@ -1,5 +1,6 @@
 import { Alert, Button, Modal, TextInput } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage"
 import { app } from "../firebase";
@@ -184,7 +185,23 @@ function DashProfile() {
           placeholder="Password" 
           onChange={handleChange}
         />
-        <Button type="submit" gradientDuoTone="purpleToBlue" outline disabled={imageFileUploadProgress !== null}>Update</Button>
+        <Button 
+          type="submit" 
+          gradientDuoTone="purpleToBlue" 
+          outline 
+          disabled={imageFileUploadProgress !== null}
+        >
+          Update
+        </Button>
+        {
+          currentUser.isAdmin && (
+            <Link to='/create-post'>
+              <Button type="button" gradientDuoTone="purpleToPink" className="w-full">
+                Create a post
+              </Button>
+            </Link>
+          )
+        }
       </form>
       <div className="text-red-500 flex justify-between mt-5">
         <span onClick={() => setShowModal(true)} className="cursor-pointer">Delete Account</span>
