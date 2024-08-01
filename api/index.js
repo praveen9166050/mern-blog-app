@@ -15,13 +15,14 @@ app.use(cookieParser());
 
 app.get('/api/test', (req, res) => {
   res.json({
+    success: true,
     message: "API is working."
   });
 });
 
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
-app.use('/api/posts', postsRouter)
+app.use('/api/posts', postsRouter);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
@@ -37,5 +38,5 @@ mongoose.connect(process.env.MONGO_URI).then(() => {
     console.log('Server is listening on port 3000');
   });
 }).catch(err => {
-  console.log(err.message)
+  console.log(err.message);
 });
