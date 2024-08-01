@@ -9,11 +9,12 @@ export const createPost = async (req, res, next) => {
     if (!req.body.title || !req.body.content) {
       throw new CustomError(400, "Please provide all the required fields");
     }
-    const slug = req.body.title.split(' ').join('-').toLowerCase().replace(/^[a-zA-Z0-9]/g, '-');
-    const createdPost = await Post.create({...req.body, slug, userId: user.id});
+    const slug = req.body.title.split(' ').join('-').toLowerCase().replace(/[^a-zA-Z0-9-]/g, '-');
+    const createdPost = await Post.create({...req.body, slug, userId: req.user.userId});
     res.status(201).json({
       success: true,
-      message: "Post created successfully"
+      message: "Post created successfully",
+      post: createdPost
     });
   } catch (error) {
     next(error);
