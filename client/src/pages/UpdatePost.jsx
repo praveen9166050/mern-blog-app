@@ -1,18 +1,39 @@
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import { Alert, Button, FileInput, Select, TextInput } from "flowbite-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { CircularProgressbar } from "react-circular-progressbar";
 import ReactQuill from "react-quill"
 import "react-quill/dist/quill.snow.css"
-import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 
-function CreatePost() {
+function UpdatePost() {
+  const {currentUser} = useSelector((state) => state.user);
+  const {postId} = useParams();
   const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const res = await fetch(`/api/posts/getPosts?postId=${postId}`);
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data?.message || "Something went wrong");
+        }
+        setPublishError(null);
+        setFormData(data.posts[0]);
+      } catch (error) {
+        setPublishError(error.message);
+        console.log(error.message);
+      }
+    }
+    fetchPost();
+  }, [postId]);
 
   const handleUploadImage = (e) => {
     try {
@@ -52,8 +73,8 @@ function CreatePost() {
     e.preventDefault();
     try {
       console.log(formData);
-      const res = await fetch('/api/posts/create', {
-        method: 'POST',
+      const res = await fetch(`/api/posts/updatePost/${postId}/${currentUser._id}`, {
+        method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(formData)
       });
@@ -65,7 +86,7 @@ function CreatePost() {
         throw new Error(data.message);
       }
       setPublishError(null);
-      navigate(`/posts/${data.post.slug}`);
+      navigate(`/posts/${data.updatedPost.slug}`);
     } catch (error) {
       setPublishError(error.message);
     }
@@ -74,7 +95,7 @@ function CreatePost() {
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">
-        Create Post
+        Update Post
       </h1>
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <div className="flex flex-col sm:flex-row gap-4 justify-between">
@@ -83,9 +104,11 @@ function CreatePost() {
             placeholder="Title" 
             required 
             id="title" 
+            defaultValue={formData.title}
             onChange={(e) => setFormData({...formData, title: e.target.value})}
             className="flex-1"/>
           <Select 
+            defaultValue={formData.category}
             onChange={(e) => setFormData({...formData, category: e.target.value})}
             className="hover:cursor-pointer"
           >
@@ -124,6 +147,7 @@ function CreatePost() {
           theme="snow" 
           placeholder="Write something..." 
           required 
+          value={formData.content}
           onChange={(value) => setFormData({...formData, content: value})}
           className="h-72 mb-12" 
         />
@@ -136,4 +160,4 @@ function CreatePost() {
   )
 }
 
-export default CreatePost
+export default UpdatePost
