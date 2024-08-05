@@ -52,7 +52,7 @@ function DashUsers() {
   const handleDeleteUser = async () => {
     setShowModal(false);
     try {
-      const res = await fetch(`/api/users/deleteUser/${userIdToDelete}`, {
+      const res = await fetch(`/api/users/delete/${userIdToDelete}`, {
         method: 'DELETE'
       });
       const data = await res.json();
@@ -100,17 +100,21 @@ function DashUsers() {
                     <Table.Cell>
                       {user.isAdmin ? <FaCheck className="text-green-500" /> : <FaTimes className="text-red-500" />}
                     </Table.Cell>
-                    <Table.Cell>
-                      <span 
-                        onClick={() => {
-                          setShowModal(true);
-                          setUserIdToDelete(user._id)
-                        }}
-                        className="font-medium text-red-500 hover:cursor-pointer hover:underline"
-                      >
-                        Delete
-                      </span>
-                    </Table.Cell>
+                    {
+                      (user._id !== currentUser._id) && (
+                        <Table.Cell>
+                          <span 
+                            onClick={() => {
+                              setShowModal(true);
+                              setUserIdToDelete(user._id)
+                            }}
+                            className="font-medium text-red-500 hover:cursor-pointer hover:underline"
+                          >
+                            Delete
+                          </span>
+                        </Table.Cell>
+                      )  
+                    }
                   </Table.Row>
                 ))}
               </Table.Body>
