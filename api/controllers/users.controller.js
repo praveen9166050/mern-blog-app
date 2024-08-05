@@ -1,3 +1,4 @@
+import { cannotHaveAUsernamePasswordPort } from "whatwg-url";
 import User from "../models/user.model.js";
 import CustomError from "../utils/customError.js";
 import bcryptjs from "bcryptjs";
@@ -8,6 +9,40 @@ export const signout = async (req, res, next) => {
       success: true,
       message: "Signe dout successfully"
     })
+  } catch (error) {
+    next(error);
+  }
+}
+
+export const getUsers = async (req, res, next) => {
+  try {
+    if (!req.user.isAdmin || req.user.userId !== req.params.userId) {
+      throw new CustomError(403, "You are not allowed to update this user.");
+    }
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 9;
+    const order = req.query.order === 'asc' ? 1 : -1;
+    const users = await User.find({})
+                            .select({password: 0})
+                            .sort({createdAt: order})
+                            .skip(startIndex)
+                            .limit(limit);
+    const totalUsers = await User.countDocuments();
+    const now = new Date();
+    const oneMonthAgo = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDate()
+    );
+    const lastMonthUsers = await User.countDocuments(
+      {createdAt: {$gte: oneMonthAgo}}
+    );
+    res.status(200).json({
+      success: true,
+      users,
+      totalUsers,
+      lastMonthUsers
+    });
   } catch (error) {
     next(error);
   }
