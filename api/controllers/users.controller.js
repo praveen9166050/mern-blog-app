@@ -16,7 +16,7 @@ export const signout = async (req, res, next) => {
 
 export const getUsers = async (req, res, next) => {
   try {
-    if (!req.user.isAdmin || req.user.userId !== req.params.userId) {
+    if (!req.user.isAdmin) {
       throw new CustomError(403, "You are not allowed to update this user.");
     }
     const startIndex = parseInt(req.query.startIndex) || 0;
