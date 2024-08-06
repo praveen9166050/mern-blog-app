@@ -87,12 +87,12 @@ function DashPosts() {
                   >
                     <Table.Cell>{new Date(post.updatedAt).toLocaleDateString()}</Table.Cell>
                     <Table.Cell>
-                      <Link to={`post/${post.slug}`}>
+                      <Link to={`/post/${post.slug}`}>
                         <img src={post.image} alt={post.title} className="w-20 h-10 object-cover bg-gray-500" />
                       </Link>
                     </Table.Cell>
                     <Table.Cell>
-                      <Link to={`post/${post.slug}`} className="font-medium text-gray-900 dark:text-white">
+                      <Link to={`/post/${post.slug}`} className="font-medium text-gray-900 dark:text-white">
                         {post.title}
                       </Link>
                     </Table.Cell>
