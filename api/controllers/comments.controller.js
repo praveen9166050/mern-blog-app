@@ -55,3 +55,24 @@ export const likeComment = async (req, res, next) => {
     next(error);
   }
 }
+
+export const editComment = async (req, res, next) => {
+  try {
+    const comment = await Comment.findById(req.params.commentId);
+    if (!comment) {
+      throw new CustomError(404, "Comment not found");
+    }
+    if (!req.user.isAdmin || req.user.userId !== comment.userId) {
+      throw new CustomError(401, "Not authorized");
+    }
+    comment.content = req.body.content;
+    await comment.save();
+    res.status(200).json({
+      success: true,
+      message: "Edited the comment successfully",
+      comment
+    });
+  } catch (error) {
+    next(error);
+  }
+}

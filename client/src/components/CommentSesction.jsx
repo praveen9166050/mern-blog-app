@@ -83,6 +83,28 @@ function CommentSesction({postId}) {
     }
   }
 
+  const handleEdit = async (comment, editedContent) => {
+    try {
+      const res = await fetch(`/api/comments/editComment/${comment._id}`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({content: editedContent})
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data?.success || "Something went wrong");
+      }
+      setComments(comments.map(c => {
+        if (c._id !== comment._id) {
+          return c;
+        }
+        return {...c, content: editedContent}
+      }));
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
   return (
     <div className="max-w-2xl mx-auto p-3">
       {currentUser ? (
@@ -128,7 +150,13 @@ function CommentSesction({postId}) {
             </div>
           </div>
           {comments.map(comment => (
-            <Comment key={comment._id} comment={comment} currentUser={currentUser} onLike={handleLike} />
+            <Comment 
+              key={comment._id} 
+              comment={comment} 
+              currentUser={currentUser} 
+              onLike={handleLike} 
+              onEdit={handleEdit}
+            />
           ))}
         </>
       )}
