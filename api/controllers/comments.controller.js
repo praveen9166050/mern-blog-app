@@ -17,3 +17,16 @@ export const createComment = async (req, res, next) => {
     next(error);
   }
 }
+
+export const getPostComments = async (req, res, next) => {
+  try {
+    const comments = await Comment.find({postId: req.params.postId}).sort({createdAt: -1});
+    res.status(200).json({
+      success: true,
+      message: "Comments fetched successfully",
+      comments
+    });
+  } catch (error) {
+    next(error);
+  }
+}

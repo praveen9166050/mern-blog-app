@@ -14,6 +14,23 @@ export const signout = async (req, res, next) => {
   }
 }
 
+export const getUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      throw new CustomError(404, "User not found");
+    }
+    const {password, ...rest} = user._doc;
+    res.status(200).json({
+      success: true,
+      message: "User fetched successfully",
+      user: rest
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export const getUsers = async (req, res, next) => {
   try {
     if (!req.user.isAdmin) {
