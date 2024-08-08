@@ -3,7 +3,7 @@ import moment from "moment"
 import { FaThumbsUp } from "react-icons/fa";
 import { Button, Textarea } from "flowbite-react";
 
-function Comment({comment, currentUser, onLike, onEdit}) {
+function Comment({comment, currentUser, onLike, onEdit, onDelete}) {
   const [user, setUser] = useState({});
   const [editing, setEditing] = useState(false);
   const [content, setContent] = useState(comment.content);
@@ -75,7 +75,7 @@ function Comment({comment, currentUser, onLike, onEdit}) {
               <button 
                 type="button" 
                 onClick={() => onLike(comment._id)} 
-                className={`text-gray-400 hover:text-blue-500 ${currentUser && comment.likes.includes(currentUser._id) && '!text-blue-500'}`}
+                className={`text-gray-400 hover:text-blue-500 ${currentUser && comment && comment.likes.includes(currentUser._id) && '!text-blue-500'}`}
               >
                 <FaThumbsUp className="text-sm" />
               </button>
@@ -83,13 +83,22 @@ function Comment({comment, currentUser, onLike, onEdit}) {
                 {comment.numOfLikes > 0 && `${comment.numOfLikes} ${comment.numOfLikes === 1 ? 'like' : 'likes'}`}
               </p>
               {currentUser && (currentUser._id === comment.userId || currentUser.isAdmin) && (
-                <button 
-                  type="button" 
-                  onClick={handleEdit}
-                  className="text-gray-400 hover:text-blue-500"
-                >
-                  Edit
-                </button>
+                <>
+                  <button 
+                    type="button" 
+                    onClick={handleEdit}
+                    className="text-gray-400 hover:text-blue-500"
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => onDelete(comment._id)}
+                    className="text-gray-400 hover:text-red-500"
+                  >
+                    Delete
+                  </button>
+                </>
               )}
             </div>
           </>

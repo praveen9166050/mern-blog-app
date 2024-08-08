@@ -76,3 +76,22 @@ export const editComment = async (req, res, next) => {
     next(error);
   }
 }
+
+export const deleteComment = async (req, res, next) => {
+  try {
+    const comment = await Comment.findById(req.params.commentId);
+    if (!comment) {
+      throw new CustomError(404, "Comment not found");
+    }
+    if (!req.user.isAdmin || req.user.userId !== comment.userId) {
+      throw new CustomError(401, "Not authorized");
+    }
+    await comment.deleteOne()
+    res.status(200).json({
+      success: true,
+      message: "Deleted the comment successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+}
