@@ -1,7 +1,7 @@
 import { Alert, Button, Textarea } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Comment from "./Comment";
 
 function CommentSesction({postId}) {
@@ -10,6 +10,7 @@ function CommentSesction({postId}) {
   const [commentError, setCommentError] = useState(null);
   const [comments, setComments] = useState([]);
   console.log(comments);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -51,6 +52,34 @@ function CommentSesction({postId}) {
       setComments([comment, ...comments]);
     } catch (error) {
       setCommentError(error.message);
+    }
+  }
+
+  const handleLike = async (commentId) => {
+    try {
+      if (!currentUser) {
+        navigate('/sign-in');
+        return;
+      }
+      const res = await fetch(`/api/comments/likeComment/${commentId}`, {
+        method: 'PUT'
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data?.message || "Something went wrong");
+      }
+      setComments(comments.map(comment => {
+        if (comment._id !== commentId) {
+          return comment;
+        }
+        return {
+          ...comment, 
+          likes: data.comment.likes, 
+          numOfLikes: data.comment.numOfLikes
+        }
+      }));
+    } catch (error) {
+      console.log(error.message);
     }
   }
 
@@ -99,7 +128,7 @@ function CommentSesction({postId}) {
             </div>
           </div>
           {comments.map(comment => (
-            <Comment key={comment._id} comment={comment} />
+            <Comment key={comment._id} comment={comment} currentUser={currentUser} onLike={handleLike} />
           ))}
         </>
       )}
