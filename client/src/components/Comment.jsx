@@ -11,7 +11,7 @@ function Comment({comment, currentUser, onLike, onEdit, onDelete}) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch(`/api/users/${comment.userId}`);
+        const res = await fetch(`/api/users/getUser/${comment.userId}`);
         const data = await res.json();
         if (!res.ok || !data.success) {
           throw new Error(data?.message || "Something went wrong");

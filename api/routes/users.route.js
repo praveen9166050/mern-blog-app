@@ -5,7 +5,7 @@ import { verifyUser } from '../utils/verifyUser.js';
 const router = express.Router();
 
 router.post('/signout', signout);
-router.get('/:userId', getUser);
+router.get('/getUser/:userId', getUser);
 
 router.use(verifyUser);
 router.get('/getUsers', getUsers);

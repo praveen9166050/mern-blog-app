@@ -18,6 +18,40 @@ export const createComment = async (req, res, next) => {
   }
 }
 
+export const getComments = async (req, res, next) => {
+  try {
+    if (!req.user.isAdmin) {
+      throw new CustomError(403, "You are not allowed to get all the comments");
+    }
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 9;
+    const order = req.query.order === 'asc' ? 1 : -1;
+    const comments = await Comment.find({})
+                                  .sort({createdAt: order})
+                                  .skip(startIndex)
+                                  .limit(limit);
+    const totalComments = await Comment.countDocuments();
+    const now = new Date();
+    const oneMonthAgo = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDate()
+    );
+    const lastMonthComments = await Comment.countDocuments(
+      {createdAt: {$gte: oneMonthAgo}}
+    );
+    res.status(200).json({
+      success: true,
+      message: "Comments fetched successfully",
+      comments,
+      totalComments,
+      lastMonthComments
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export const getPostComments = async (req, res, next) => {
   try {
     const comments = await Comment.find({postId: req.params.postId}).sort({createdAt: -1});
