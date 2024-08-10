@@ -1,6 +1,14 @@
+import CallToAction from "../components/CallToAction"
+
 function Projects() {
   return (
-    <div>Projects</div>
+    <div className="min-h-screen max-w-2xl mx-auto flex flex-col justify-center text-center gap-6 p-3">
+      <h1 className="text-3xl font-semibold">Projects</h1>
+      <p className="text-md text-gray-500">
+        Build fun and engaging projects while learning HTML, CSS and JavaScript
+      </p>
+      <CallToAction />
+    </div>
   )
 }
 

@@ -93,7 +93,7 @@ function Search() {
       setPosts([...posts, ...data.posts]);
       setShowMore(data.posts.length === 9);
     } catch (error) {
-      
+      console.log(error.message);
     }
   }
 
